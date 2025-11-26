@@ -1,13 +1,12 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Link from "next/link";
+import type { Metadata } from 'next';
+import './globals.css';
+import { cn } from '@/lib/utils';
+import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LIMS - Legislative System",
-  description: "Legislative Information Management System",
+  title: 'LegislateNow',
+  description: 'Municipal Legislative Information System',
 };
 
 export default function RootLayout({
@@ -16,20 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-slate-50 text-slate-900`}>
-        <nav className="bg-slate-900 text-white p-4 shadow-md">
-          <div className="container mx-auto flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold tracking-wider">🏛️ LIMS</Link>
-            <div className="space-x-6">
-              <Link href="/bills" className="hover:text-blue-300 transition">View Bills</Link>
-              <Link href="/admin/create" className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition">Admin: Add Bill</Link>
-            </div>
-          </div>
-        </nav>
-        <main className="container mx-auto p-6 min-h-screen">
-          {children}
-        </main>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+      </head>
+      <body className={cn("min-h-screen  bg-background font-body antialiased")}>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

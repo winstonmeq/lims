@@ -1,11 +1,14 @@
 // models/Bill.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
+
+export type OrdinanceStatus = 'Introduced' | 'In Committee' | 'First Reading' | 'Passed' | 'Rejected';
+
 export interface IBill extends Document {
   title: string;
   billNumber: string;
   description: string;
-  status: string;
+  status: OrdinanceStatus;
   author: string;
   content: string;
   createdAt: Date;
@@ -14,6 +17,7 @@ export interface IBill extends Document {
 
 const BillSchema: Schema = new Schema(
   {
+    
     title: { type: String, required: true },
     billNumber: { type: String, required: true, unique: true },
     description: { type: String, required: true },
