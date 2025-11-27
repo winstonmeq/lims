@@ -39,13 +39,15 @@ export type DocumentVersion = {
 };
 
 export type Ordinance = {
-  _id: string;
+  id: string;
+  
+  ordinanceNumber: string;
   title: string;
-  billNumber: string;
-  description: string;
+  summary: string;
+  fullText: string;
   status: OrdinanceStatus;
-  author: string;
-  content: string;
+  committeeId: string;
+  authorId: string;
   createdAt: Date;
   updatedAt: Date;
 };

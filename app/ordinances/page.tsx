@@ -1,19 +1,17 @@
 import { OrdinanceSearchFilters } from "@/components/public/OrdinanceSearchFilters";
 import { OrdinanceCard } from "@/components/shared/OrdinanceCard";
-// import { ordinances as allOrdinances } from "@/lib/data";
-import { Separator } from "@/components/ui/separator";
-import { getBills } from "@/app/actions";
+import { getAllOrdinances } from "../actions/ordinanceActions";
 
 
 
 export default async function OrdinancesPage() {
 
-        const ordinance = await getBills();
 
-  const publishedOrdinances = ordinance.filter(o => o.status === 'Passed');
+        const GetAllOrdinance = await getAllOrdinances();
+
+  const publishedOrdinances = GetAllOrdinance.filter(o => o.status === 'Introduced');
 
 
-  
 
   return (
     <div className="container py-8">
@@ -32,8 +30,8 @@ export default async function OrdinancesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {publishedOrdinances.map(ordinances => (
             <OrdinanceCard
-              key={ordinances._id}
-              ordinance={{
+              key={ordinances.id}
+             ordinance={{
                 ...ordinances,
                 createdAt: new Date(ordinances.createdAt),
                 updatedAt: new Date(ordinances.updatedAt),

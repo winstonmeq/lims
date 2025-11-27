@@ -1,0 +1,52 @@
+{
+    "placeholderImages": [
+      {
+        "id": "councilor-1",
+        "description": "Avatar for Evelyn Reed",
+        "imageUrl": "https://images.unsplash.com/photo-1592621385612-4d7129426394?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTcxODAxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "woman portrait"
+      },
+      {
+        "id": "councilor-2",
+        "description": "Avatar for Marcus Thorne",
+        "imageUrl": "https://images.unsplash.com/photo-1636377985931-898218afd306?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTk2NzcyNjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "man portrait"
+      },
+      {
+        "id": "councilor-3",
+        "description": "Avatar for Isabella Chen",
+        "imageUrl": "https://images.unsplash.com/photo-1627564554639-cf003858f5b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHBvcnRyYWl0JTIwc21pbGluZ3xlbnwwfHx8fDE3NTk2ODkxNjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "woman portrait smiling"
+      },
+      {
+        "id": "councilor-4",
+        "description": "Avatar for David Rodriguez",
+        "imageUrl": "https://images.unsplash.com/photo-1680104073088-ad3ef1ba4a1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYW4lMjBwb3J0cmFpdCUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NTk3Mzc4NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "man portrait professional"
+      },
+      {
+        "id": "councilor-5",
+        "description": "Avatar for Sarah Jenkins",
+        "imageUrl": "https://images.unsplash.com/photo-1655249481446-25d575f1c054?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0JTIwcHJvZmVzc2lvbmFsfGVufDB8fHx8MTc1OTczNzg3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "woman portrait professional"
+      },
+      {
+        "id": "councilor-6",
+        "description": "Avatar for Ben Carter",
+        "imageUrl": "https://images.unsplash.com/flagged/photo-1576507643602-a0ab95093c1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW4lMjBwb3J0cmFpdCUyMGdsYXNzZXN8ZW58MHx8fHwxNzU5NzM3NjM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "man portrait glasses"
+      },
+      {
+        "id": "user-clerk",
+        "description": "Avatar for Clerk",
+        "imageUrl": "https://images.unsplash.com/photo-1590086782792-42dd2350140d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTk2MjQ1ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "person portrait"
+      },
+      {
+        "id": "user-secretary",
+        "description": "Avatar for Secretary Admin",
+        "imageUrl": "https://images.unsplash.com/photo-1656313815939-6373a497bbf2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGVyc29uJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzU5NjY3NDYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "imageHint": "person portrait professional"
+      }
+    ]
+  }

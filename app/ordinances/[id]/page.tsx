@@ -1,0 +1,89 @@
+import { councilors, committees } from '@/lib/data';
+import { notFound } from 'next/navigation';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Download, Calendar, Gavel, User, CheckCircle, XCircle, MinusCircle, UserX } from 'lucide-react';
+import type { VoteValue } from '@/lib/definitions';
+import { getOrdinance } from '@/app/actions/ordinanceActions';
+
+
+
+
+export default async function OrdinanceDetailPage({params}: params (id:string)) {
+
+    const { id } = params;
+
+    console.log('idosdifsdf', id)
+
+    const result = await getOrdinance(id);
+
+    console.log('maoni', result)
+
+    if (!result.success || !result.ordinance) {
+      notFound();
+    }
+
+    const ordinance = result.ordinance;
+
+  const author = councilors.find(c => c.id === ordinance.authorId);
+  const committee = committees.find(c => c.id === ordinance.committeeId);
+ 
+  return (
+    <div className="container py-10">
+      <header className="mb-8">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div>
+            <p className="text-lg font-semibold text-primary">{ordinance.ordinanceNumber}</p>
+            <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight font-headline">{ordinance.title}</h1>
+          </div>
+          <StatusBadge status={ordinance.status} className="text-base px-4 py-1.5 md:mt-2" />
+        </div>
+        <p className="mt-4 text-lg text-muted-foreground max-w-3xl">{ordinance.summary}</p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <aside className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="flex items-start gap-3">
+                <User className="h-4 w-4 mt-1 text-accent shrink-0" />
+                <div>
+                  <h4 className="font-semibold">Author</h4>
+                  <p className="text-muted-foreground">{author?.name || 'N/A'}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Gavel className="h-4 w-4 mt-1 text-accent shrink-0" />
+                <div>
+                  <h4 className="font-semibold">Committee</h4>
+                  <p className="text-muted-foreground">{committee?.name || 'N/A'}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Calendar className="h-4 w-4 mt-1 text-accent shrink-0" />
+                <div>
+                  <h4 className="font-semibold">Published Date</h4>
+                  <p className="text-muted-foreground">
+                    {ordinance.updatedAt ? new Date(ordinance.updatedAt).toLocaleDateString() : 'Not Published'}
+                  </p>
+                </div>
+              </div>
+               {/* <Button className="w-full mt-4" disabled={!ordinance.versions.at(-1)?.url}>
+                <Download className="mr-2 h-4 w-4" /> Download PDF
+              </Button> */}
+            </CardContent>
+          </Card>
+        </aside>
+
+     
+      </div>
+    </div>
+  );
+}

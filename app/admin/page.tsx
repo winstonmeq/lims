@@ -2,14 +2,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
-// import { ordinances } from "@/lib/data";
 import { Activity, ArrowUpRight, FileText, Gavel, CheckCircle, Clock } from "lucide-react";
 import Link from 'next/link';
-import { getBills } from "../actions";
+import { getAllOrdinances } from "../actions/ordinanceActions";
 
 export default async function AdminDashboard() {
 
-    const ordinances = await getBills();
+    const ordinances = await getAllOrdinances();
     
 
 
@@ -99,11 +98,11 @@ export default async function AdminDashboard() {
                     </TableHeader>
                     <TableBody>
                         {recentOrdinances.map(ord => (
-                            <TableRow key={ord._id}>
+                            <TableRow key={ord.id}>
                                 <TableCell>
                                     <div className="font-medium">{ord.title}</div>
                                     <div className="hidden text-sm text-muted-foreground md:inline">
-                                        {ord.billNumber}
+                                        {ord.ordinanceNumber}
                                     </div>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
