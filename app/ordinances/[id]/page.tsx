@@ -17,11 +17,11 @@ export default async function OrdinanceDetailPage({params}: {params: Promise<{ i
 
     const { id } = await params;
 
-    console.log('idosdifsdf', id)
+ 
 
     const result = await getOrdinance(id);
 
-    console.log('maoni', result)
+   
 
     if (!result.success || !result.ordinance) {
       notFound();

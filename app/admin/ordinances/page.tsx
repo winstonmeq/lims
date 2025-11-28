@@ -84,7 +84,11 @@ async function OrdinancesTable({ ordinances }: { ordinances: Ordinance[] }) {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                                    <Link href={`/admin/ordinances/${ordinance.id}/edit`}>
+                                                        Edit
+                                                    </Link>
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem>Publish</DropdownMenuItem>
                                     <DropdownMenuItem>View Public Page</DropdownMenuItem>
                                     <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
