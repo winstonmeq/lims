@@ -13,9 +13,9 @@ import { getOrdinance } from '@/app/actions/ordinanceActions';
 
 
 
-export default async function OrdinanceDetailPage({params}: params (id:string)) {
+export default async function OrdinanceDetailPage({params}: {params: Promise<{ id: string }>}) {
 
-    const { id } = params;
+    const { id } = await params;
 
     console.log('idosdifsdf', id)
 

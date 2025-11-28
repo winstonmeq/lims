@@ -56,6 +56,8 @@ export async function getAllOrdinances() {
 }
 
 
+
+
 /* ============================
    GET ONE Ordinance
 ============================ */
