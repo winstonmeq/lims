@@ -35,7 +35,7 @@ export function OrdinanceSearchFilters() {
           </Select>
         </div>
         <div>
-          <Button className="w-full bg-accent hover:bg-accent/90">
+          <Button className="w-full bg-green-600 hover:bg-green-700 text-white mt-6">
             <Search className="mr-2 h-4 w-4" />
             Search
           </Button>

@@ -35,11 +35,11 @@ export function OrdinanceCard({ ordinance }: OrdinanceCardProps) {
         <p className="text-muted-foreground text-sm line-clamp-3">{ordinance.fullText}</p>
         <div className="mt-4 space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Gavel className="h-4 w-4 text-accent" />
+            <Gavel className="h-4 w-4 text-green-600" />
             <span>{committee?.name || 'N/A'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-accent" />
+            <Calendar className="h-4 w-4 text-green-700" />
             <span>{ordinance.status === 'Passed' ? 'Rejected' : 'Updated'}: {formattedDate}</span>
           </div>
         </div>

@@ -137,6 +137,7 @@ export default function NewOrdinancePage() {
                     <Textarea
                       id="fullText"
                       name="fullText"
+                      rows={10}
                       value={fullText}
                       onChange={(e) => setFullText(e.target.value)}
                     />
