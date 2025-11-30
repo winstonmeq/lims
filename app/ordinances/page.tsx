@@ -1,19 +1,25 @@
-export const dynamic = "force-dynamic";
+"use client";
 
+import { useEffect, useState } from "react";
 import { OrdinanceSearchFilters } from "@/components/public/OrdinanceSearchFilters";
 import { OrdinanceCard } from "@/components/shared/OrdinanceCard";
-import { getAllOrdinances } from "../actions/ordinanceActions";
+import { getAllOrdinances, searchOrdinances } from "../actions/ordinanceActions";
+import type { Ordinance } from "@/lib/definitions";
 
+export default function OrdinancesPage() {
+  const [ordinances, setOrdinances] = useState<Ordinance[]>([]);
+  const [loading, setLoading] = useState(true);
 
-
-export default async function OrdinancesPage() {
-
-
-        const GetAllOrdinance = await getAllOrdinances();
-
-  const publishedOrdinances = GetAllOrdinance.filter(o => o.status === 'Introduced');
-
-
+  // Load all ordinances on first render
+  useEffect(() => {
+    async function fetchAll() {
+      const all = await getAllOrdinances();
+      const published = all.filter(o => o.status === 'Passed' || o.status === 'In Committee');
+      setOrdinances(published);
+      setLoading(false);
+    }
+    fetchAll();
+  }, []);
 
   return (
     <div className="container py-8">
@@ -26,17 +32,20 @@ export default async function OrdinancesPage() {
         </p>
       </section>
 
-      <OrdinanceSearchFilters />
+      {/* Pass the state setter to your search component */}
+      <OrdinanceSearchFilters setResults={setOrdinances} />
 
-      {publishedOrdinances.length > 0 ? (
+      {loading ? (
+        <p className="text-center">Loading...</p>
+      ) : ordinances.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {publishedOrdinances.map(ordinances => (
+          {ordinances.map(o => (
             <OrdinanceCard
-              key={ordinances.id}
-             ordinance={{
-                ...ordinances,
-                createdAt: new Date(ordinances.createdAt),
-                updatedAt: new Date(ordinances.updatedAt),
+              key={o.id}
+              ordinance={{
+                ...o,
+                createdAt: new Date(o.createdAt),
+                updatedAt: new Date(o.updatedAt),
               }}
             />
           ))}

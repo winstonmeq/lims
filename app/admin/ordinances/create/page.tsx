@@ -26,9 +26,14 @@ export default function NewOrdinancePage() {
   const [fullText, setFullText] = useState("");
   const [authorId, setAuthorId] = useState("");
   const [committeeId, setCommitteeId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+
 
   async function handleSubmit(e: any) {
     e.preventDefault();
+    setIsLoading(true);
+
 
     const form = e.currentTarget;
     const formData = new FormData(form);
@@ -50,11 +55,11 @@ const idValue =
 
     try {
       const result = await createOrdinance(formData);
-      console.log("SAVE RESULT:", result);
 
       if (result.success) {
-        alert("Ordinance saved successfully!");
         form.reset();
+        alert("Ordinance saved successfully!");
+        
       } else {
         alert("Error: " + result.message);
       }
@@ -62,7 +67,24 @@ const idValue =
       console.error(error);
       alert("Something went wrong!");
     }
+
+      setIsLoading(false);
+
   }
+
+  function handleDiscard() {
+  setTitle("");
+  setOrdinanceNumber("");
+  setSummary("");
+  setFullText("");
+  setAuthorId("");
+  setCommitteeId("");
+
+  // Also reset the <form> element
+  const form = document.querySelector("form") as HTMLFormElement;
+  if (form) form.reset();
+}
+
 
   return (
     <form
@@ -70,21 +92,35 @@ const idValue =
       className="grid flex-1 items-start gap-4 md:gap-8"
     >
       <div className="grid max-w-5xl flex-1 auto-rows-max gap-4">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" className="h-7 w-7" asChild>
-            <Link href="/admin/ordinances">
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Back</span>
-            </Link>
-          </Button>
-          <h1 className="text-xl font-semibold">Draft a New Ordinance</h1>
-          <Badge variant="outline" className="ml-auto">New</Badge>
+            <div className="flex items-center gap-4 w-full">
+            <Button variant="outline" size="icon" className="h-7 w-7" asChild>
+              <Link href="/admin/ordinances">
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Back</span>
+              </Link>
+            </Button>
 
-          <div className="hidden md:flex items-center gap-2">
-            <Button type="button" variant="outline" size="sm">Discard</Button>
-            <Button type="submit" size="sm">Save</Button>
-          </div>
-        </div>
+            {/* Title + Badge grouped on the left */}
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold">Draft a New Ordinance</h1>
+              <Badge variant="outline" className="items-center">New</Badge>
+            </div>
+
+            {/* Spacer: push these to the far right */}
+            <div className="ml-auto hidden md:flex items-center gap-2">
+              <Button onClick={handleDiscard} type="button" variant="outline" size="sm">Discard</Button>
+              <Button type="submit" size="sm">
+                 {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></span>
+                      Saving...
+                    </div>
+                  ) : (
+                    "Save"
+                  )}
+              </Button>
+            </div>
+      </div>
 
         <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
           {/* LEFT */}

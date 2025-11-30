@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-import { committees, councilors } from "@/lib/data";
+import { committees, councilors, ordinanceVersion } from "@/lib/data";
 import { updateOrdinance } from "@/app/actions/ordinanceActions";
 import { useRouter } from "next/navigation";
 
@@ -38,6 +38,8 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
   const [fullText, setFullText] = useState(ordinance.fullText);
   const [authorId, setAuthorId] = useState(ordinance.authorId);
   const [committeeId, setCommitteeId] = useState(ordinance.committeeId);
+  const [status, setStatus] = useState(ordinance.status);
+
 
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -54,7 +56,7 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
 
       if (result.success) {
         setMessage("Ordinance updated successfully!");
-        router.refresh(); // refresh current page
+        router.push("/admin/ordinances"); // refresh current page
       } else {
         setMessage(result.message || "Failed to update.");
       }
@@ -110,6 +112,7 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
 
               <input type="hidden" name="authorId" value={authorId} />
               <input type="hidden" name="committeeId" value={committeeId} />
+              <input type="hidden" name="status" value={status} />
 
             </CardContent>
           </Card>
@@ -144,6 +147,19 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                     {committees.map(c => (
                       <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+                <div className="grid gap-3">
+                <Label>Status</Label>
+                <Select defaultValue={status} onValueChange={setStatus}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>                    
+                       {ordinanceVersion.map(c => (
+                      <SelectItem value={c.status} key={c.id}>{c.status}</SelectItem>
+                    ))}
+                    
                   </SelectContent>
                 </Select>
               </div>

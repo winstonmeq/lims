@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Calendar, Gavel, User, CheckCircle, XCircle, MinusCircle, UserX } from 'lucide-react';
 import type { VoteValue } from '@/lib/definitions';
 import { getOrdinance } from '@/app/actions/ordinanceActions';
+import { Textarea } from '@/components/ui/textarea';
 
 
 
@@ -109,7 +110,10 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
             <TabsContent value="full-text" className="mt-4">
               <Card>
                 <CardContent className="p-6 prose dark:prose-invert max-w-none">
-                  <p>{ordinance.fullText}</p>
+                 <p className="whitespace-pre-line">
+                  {ordinance.fullText}
+                </p>
+               
                 </CardContent>
               </Card>
             </TabsContent>

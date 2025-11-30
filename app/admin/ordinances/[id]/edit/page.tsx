@@ -18,7 +18,6 @@ export default async function EditOrdinancePage({ params }: {params: Promise<{ i
 
   const ordinance = JSON.parse(JSON.stringify(result.ordinance));
 
-  console.log('ordinance result', ordinance)
 
 //   const ordinance = result.ordinance;
 

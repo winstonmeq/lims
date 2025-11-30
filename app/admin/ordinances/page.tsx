@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+
+
 import Link from "next/link";
 import {
   File,
@@ -44,7 +47,6 @@ async function OrdinancesTable({ ordinances }: { ordinances: Ordinance[] }) {
 
     const allOrdinance = await getAllOrdinances();
 
-      console.log(allOrdinance)
 
     return (
         <Table>

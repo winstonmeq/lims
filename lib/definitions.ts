@@ -29,7 +29,15 @@ export type Vote = {
   councilorId: string;
   vote: VoteValue;
 };
+
 export type OrdinanceStatus = 'Introduced' | 'In Committee' | 'First Reading' | 'Passed' | 'Rejected';
+
+export type OrdinanceVersion = {    
+  id: string;
+  status: OrdinanceStatus;
+}
+
+
 
 export type DocumentVersion = {
   version: number;
