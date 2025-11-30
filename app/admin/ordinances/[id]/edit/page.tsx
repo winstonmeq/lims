@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+
+
 import { getOrdinance } from "@/app/actions/ordinanceActions";
 import EditOrdinanceForm from "./EditOrdinanceForm";
 import { notFound } from "next/navigation";

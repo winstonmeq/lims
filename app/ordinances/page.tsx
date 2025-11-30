@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { OrdinanceSearchFilters } from "@/components/public/OrdinanceSearchFilters";
 import { OrdinanceCard } from "@/components/shared/OrdinanceCard";
 import { getAllOrdinances } from "../actions/ordinanceActions";

@@ -36,10 +36,14 @@ export default function NewOrdinancePage() {
     // Fix: avoid variable shadowing
     const ordNum = formData.get("ordinanceNumber") as string;
 
-    const idValue =
-      ordNum && ordNum.trim() !== ""
-        ? `ord-${ordNum}`
-        : `ord-${Date.now()}`;
+   const sanitized = ordNum
+  ? ordNum.trim().replace(/\s+/g, "-") // Remove/replace spaces
+  : "";
+
+const idValue =
+  sanitized !== ""
+    ? `ord-${sanitized}`
+    : `ord-${Date.now()}`;
 
     formData.set("id", idValue);
     formData.set("status", "Introduced");
