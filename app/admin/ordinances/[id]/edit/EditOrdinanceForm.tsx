@@ -13,6 +13,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { X } from "lucide-react";
 
 import { committees, councilors, ordinanceVersion } from "@/lib/data";
 import { updateOrdinance } from "@/app/actions/ordinanceActions";
@@ -26,8 +38,8 @@ interface Ordinance {
   fullText: string;
   status: string;
   committeeId: string;
-  authorId: string;
-  createdAt: string; 
+  authorIds: string[];
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -36,16 +48,17 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
   const [ordinanceNumber, setOrdinanceNumber] = useState(ordinance.ordinanceNumber);
   const [summary, setSummary] = useState(ordinance.summary);
   const [fullText, setFullText] = useState(ordinance.fullText);
-  const [authorId, setAuthorId] = useState(ordinance.authorId);
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>(ordinance.authorIds || []);
   const [committeeId, setCommitteeId] = useState(ordinance.committeeId);
   const [status, setStatus] = useState(ordinance.status);
+  const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
 
 
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -61,6 +74,14 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
         setMessage(result.message || "Failed to update.");
       }
     });
+  };
+
+  const toggleAuthor = (id: string) => {
+    setSelectedAuthors((prev) =>
+      prev.includes(id)
+        ? prev.filter((authorId) => authorId !== id)
+        : [...prev, id]
+    );
   };
 
   return (
@@ -110,7 +131,10 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                 <Textarea name="fullText" value={fullText} onChange={e => setFullText(e.target.value)} />
               </div>
 
-              <input type="hidden" name="authorId" value={authorId} />
+              {/* AuthorIDs - Hidden Inputs */}
+              {selectedAuthors.map((id) => (
+                <input key={id} type="hidden" name="authorIds" value={id} />
+              ))}
               <input type="hidden" name="committeeId" value={committeeId} />
               <input type="hidden" name="status" value={status} />
 
@@ -128,15 +152,52 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
             <CardContent className="grid gap-6">
 
               <div className="grid gap-3">
-                <Label>Author</Label>
-                <Select defaultValue={authorId} onValueChange={setAuthorId}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {councilors.map(c => (
-                      <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label>Authors</Label>
+                <div className="flex gap-2">
+                  <Input
+                    readOnly
+                    placeholder="No authors selected"
+                    value={councilors
+                      .filter((c) => selectedAuthors.includes(c.id))
+                      .map((c) => c.name)
+                      .join(", ")}
+                  />
+                  <Dialog open={isAuthorDialogOpen} onOpenChange={setIsAuthorDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Select</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Select Authors</DialogTitle>
+                        <DialogDescription>
+                          Select the councilors who authored this ordinance.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4 max-h-[300px] overflow-y-auto">
+                        {councilors.map((councilor) => (
+                          <div key={councilor.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`author-${councilor.id}`}
+                              checked={selectedAuthors.includes(councilor.id)}
+                              onCheckedChange={() => toggleAuthor(councilor.id)}
+                            />
+                            <Label
+                              htmlFor={`author-${councilor.id}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {councilor.name}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button">Done</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
 
               <div className="grid gap-3">
@@ -151,15 +212,15 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                 </Select>
               </div>
 
-                <div className="grid gap-3">
+              <div className="grid gap-3">
                 <Label>Status</Label>
                 <Select defaultValue={status} onValueChange={setStatus}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>                    
-                       {ordinanceVersion.map(c => (
+                  <SelectContent>
+                    {ordinanceVersion.map(c => (
                       <SelectItem value={c.status} key={c.id}>{c.status}</SelectItem>
                     ))}
-                    
+
                   </SelectContent>
                 </Select>
               </div>

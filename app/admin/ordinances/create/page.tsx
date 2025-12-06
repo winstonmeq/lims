@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Upload } from "lucide-react";
+import { ChevronLeft, Upload, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,17 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { committees, councilors } from "@/lib/data";
 import { createOrdinance } from "@/app/actions/ordinanceActions";
@@ -24,9 +35,10 @@ export default function NewOrdinancePage() {
   const [ordinanceNumber, setOrdinanceNumber] = useState("");
   const [summary, setSummary] = useState("");
   const [fullText, setFullText] = useState("");
-  const [authorId, setAuthorId] = useState("");
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [committeeId, setCommitteeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
 
 
 
@@ -41,14 +53,14 @@ export default function NewOrdinancePage() {
     // Fix: avoid variable shadowing
     const ordNum = formData.get("ordinanceNumber") as string;
 
-   const sanitized = ordNum
-  ? ordNum.trim().replace(/\s+/g, "-") // Remove/replace spaces
-  : "";
+    const sanitized = ordNum
+      ? ordNum.trim().replace(/\s+/g, "-") // Remove/replace spaces
+      : "";
 
-const idValue =
-  sanitized !== ""
-    ? `ord-${sanitized}`
-    : `ord-${Date.now()}`;
+    const idValue =
+      sanitized !== ""
+        ? `ord-${sanitized}`
+        : `ord-${Date.now()}`;
 
     formData.set("id", idValue);
     formData.set("status", "Introduced");
@@ -58,8 +70,9 @@ const idValue =
 
       if (result.success) {
         form.reset();
+        setSelectedAuthors([]);
         alert("Ordinance saved successfully!");
-        
+
       } else {
         alert("Error: " + result.message);
       }
@@ -68,22 +81,33 @@ const idValue =
       alert("Something went wrong!");
     }
 
-      setIsLoading(false);
+    setIsLoading(false);
 
   }
 
   function handleDiscard() {
-  setTitle("");
-  setOrdinanceNumber("");
-  setSummary("");
-  setFullText("");
-  setAuthorId("");
-  setCommitteeId("");
+    setTitle("");
+    setOrdinanceNumber("");
+    setSummary("");
+    setFullText("");
+    setFullText("");
+    setSelectedAuthors([]);
+    setCommitteeId("");
+    setCommitteeId("");
 
-  // Also reset the <form> element
-  const form = document.querySelector("form") as HTMLFormElement;
-  if (form) form.reset();
-}
+    // Also reset the <form> element
+    const form = document.querySelector("form") as HTMLFormElement;
+    if (form) form.reset();
+  }
+
+
+  const toggleAuthor = (id: string) => {
+    setSelectedAuthors((prev) =>
+      prev.includes(id)
+        ? prev.filter((authorId) => authorId !== id)
+        : [...prev, id]
+    );
+  };
 
 
   return (
@@ -92,35 +116,35 @@ const idValue =
       className="grid flex-1 items-start gap-4 md:gap-8"
     >
       <div className="grid max-w-5xl flex-1 auto-rows-max gap-4">
-            <div className="flex items-center gap-4 w-full">
-            <Button variant="outline" size="icon" className="h-7 w-7" asChild>
-              <Link href="/admin/ordinances">
-                <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Back</span>
-              </Link>
+        <div className="flex items-center gap-4 w-full">
+          <Button variant="outline" size="icon" className="h-7 w-7" asChild>
+            <Link href="/admin/ordinances">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Back</span>
+            </Link>
+          </Button>
+
+          {/* Title + Badge grouped on the left */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold">Draft a New Ordinance</h1>
+            <Badge variant="outline" className="items-center">New</Badge>
+          </div>
+
+          {/* Spacer: push these to the far right */}
+          <div className="ml-auto hidden md:flex items-center gap-2">
+            <Button onClick={handleDiscard} type="button" variant="outline" size="sm">Discard</Button>
+            <Button type="submit" size="sm">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></span>
+                  Saving...
+                </div>
+              ) : (
+                "Save"
+              )}
             </Button>
-
-            {/* Title + Badge grouped on the left */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold">Draft a New Ordinance</h1>
-              <Badge variant="outline" className="items-center">New</Badge>
-            </div>
-
-            {/* Spacer: push these to the far right */}
-            <div className="ml-auto hidden md:flex items-center gap-2">
-              <Button onClick={handleDiscard} type="button" variant="outline" size="sm">Discard</Button>
-              <Button type="submit" size="sm">
-                 {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></span>
-                      Saving...
-                    </div>
-                  ) : (
-                    "Save"
-                  )}
-              </Button>
-            </div>
-      </div>
+          </div>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
           {/* LEFT */}
@@ -183,8 +207,10 @@ const idValue =
                     />
                   </div>
 
-                  {/* AuthorID */}
-                  <input type="hidden" name="authorId" value={authorId} />
+                  {/* AuthorIDs - Hidden Inputs */}
+                  {selectedAuthors.map((id) => (
+                    <input key={id} type="hidden" name="authorIds" value={id} />
+                  ))}
 
                   {/* CommitteeID */}
                   <input type="hidden" name="committeeId" value={committeeId} />
@@ -206,17 +232,52 @@ const idValue =
 
                 {/* Author */}
                 <div className="grid gap-3">
-                  <Label>Author</Label>
-                  <Select onValueChange={setAuthorId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select author" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {councilors.map((c) => (
-                        <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label>Authors</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      readOnly
+                      placeholder="No authors selected"
+                      value={councilors
+                        .filter((c) => selectedAuthors.includes(c.id))
+                        .map((c) => c.name)
+                        .join(", ")}
+                    />
+                    <Dialog open={isAuthorDialogOpen} onOpenChange={setIsAuthorDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">Select</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Select Authors</DialogTitle>
+                          <DialogDescription>
+                            Select the councilors who authored this ordinance.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4 max-h-[300px] overflow-y-auto">
+                          {councilors.map((councilor) => (
+                            <div key={councilor.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`author-${councilor.id}`}
+                                checked={selectedAuthors.includes(councilor.id)}
+                                onCheckedChange={() => toggleAuthor(councilor.id)}
+                              />
+                              <Label
+                                htmlFor={`author-${councilor.id}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {councilor.name}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button type="button">Done</Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
 
                 {/* Committee */}

@@ -55,7 +55,7 @@ export type Ordinance = {
   fullText: string;
   status: OrdinanceStatus;
   committeeId: string;
-  authorId: string;
+  authorIds: string[];
   createdAt: Date;
   updatedAt: Date;
 };

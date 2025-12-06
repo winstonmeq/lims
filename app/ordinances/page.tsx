@@ -14,7 +14,7 @@ export default function OrdinancesPage() {
   useEffect(() => {
     async function fetchAll() {
       const all = await getAllOrdinances();
-      const published = all.filter(o => o.status === 'Passed' || o.status === 'In Committee');
+      const published = all.filter(o => o.status === 'Passed' || o.status === 'In Committee' || o.status === 'Introduced');
       setOrdinances(published);
       setLoading(false);
     }
