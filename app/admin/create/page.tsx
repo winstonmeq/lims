@@ -18,6 +18,7 @@ export default function CreateBillPage() {
               <option value="Committee">In Committee</option>
               <option value="First Reading">First Reading</option>
               <option value="Passed">Passed</option>
+                <option value="Published">Published</option>
             </select>
           </div>
         </div>

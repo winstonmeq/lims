@@ -18,7 +18,7 @@ export async function createOrdinance(formData: FormData) {
       summary: formData.get("summary") as string,
       fullText: formData.get("fullText") as string,
       status: formData.get("status") as string,
-      committeeId: formData.get("committeeId") as string,
+      committeeId: formData.getAll("committeeId") as string[],
       authorIds: formData.getAll("authorIds") as string[],
       publishedAt: formData.get("publishedAt")
         ? new Date(formData.get("publishedAt") as string)
@@ -68,15 +68,21 @@ export async function getAllOrdinances() {
    GET ONE Ordinance
 ============================ */
 export async function getOrdinance(id: string) {
+
   try {
+
     await connectDB();
+
     const ordinance = await Ordinance.findOne({ id });
 
     if (!ordinance) return { success: false, message: "Not found" };
 
     return { success: true, ordinance: JSON.parse(JSON.stringify(ordinance)) };
+
   } catch (error: any) {
+
     return { success: false, message: error.message };
+    
   }
 }
 

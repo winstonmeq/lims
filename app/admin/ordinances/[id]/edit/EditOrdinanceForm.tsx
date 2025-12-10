@@ -37,7 +37,7 @@ interface Ordinance {
   summary: string;
   fullText: string;
   status: string;
-  committeeId: string;
+  committeeId: string[];
   authorIds: string[];
   createdAt: string;
   updatedAt: string;
@@ -49,9 +49,10 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
   const [summary, setSummary] = useState(ordinance.summary);
   const [fullText, setFullText] = useState(ordinance.fullText);
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>(ordinance.authorIds || []);
-  const [committeeId, setCommitteeId] = useState(ordinance.committeeId);
   const [status, setStatus] = useState(ordinance.status);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
+  const [isCommitteeDialogOpen, setIsCommitteeDialogOpen] = useState(false);
+  const [selectedCommittee, setSelectedCommittee] = useState<string[]>(Array.isArray(ordinance.committeeId) ? ordinance.committeeId : []);
 
 
   const [message, setMessage] = useState("");
@@ -80,6 +81,14 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
     setSelectedAuthors((prev) =>
       prev.includes(id)
         ? prev.filter((authorId) => authorId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const toggleCommittee = (id: string) => {
+    setSelectedCommittee((prev) =>
+      prev.includes(id)
+        ? prev.filter((committeeId) => committeeId !== id)
         : [...prev, id]
     );
   };
@@ -135,7 +144,10 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
               {selectedAuthors.map((id) => (
                 <input key={id} type="hidden" name="authorIds" value={id} />
               ))}
-              <input type="hidden" name="committeeId" value={committeeId} />
+
+                 {selectedCommittee.map((id) => (
+                <input key={id} type="hidden" name="committeeId" value={id} />
+              ))}
               <input type="hidden" name="status" value={status} />
 
             </CardContent>
@@ -200,16 +212,54 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                 </div>
               </div>
 
+               
               <div className="grid gap-3">
-                <Label>Committee</Label>
-                <Select defaultValue={committeeId} onValueChange={setCommitteeId}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {committees.map(c => (
-                      <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label>Committees</Label>
+                <div className="flex gap-2">
+                  <Input
+                    readOnly
+                    placeholder="No committee selected"
+                    value={committees
+                      .filter((c) => selectedCommittee.includes(c.id))
+                      .map((c) => c.name)
+                      .join(", ")}
+                  />
+                  <Dialog open={isCommitteeDialogOpen} onOpenChange={setIsCommitteeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Select</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Select Committees</DialogTitle>
+                        <DialogDescription>
+                          Select the committees who authored this ordinance.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4 max-h-[300px] overflow-y-auto">
+                        {committees.map((committee) => (
+                          <div key={committee.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`committee-${committee.id}`}
+                              checked={selectedCommittee.includes(committee.id)}
+                              onCheckedChange={() => toggleCommittee(committee.id)}
+                            />
+                            <Label
+                              htmlFor={`committee-${committee.id}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {committee.name}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button">Done</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
 
               <div className="grid gap-3">

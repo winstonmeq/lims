@@ -36,9 +36,11 @@ export default function NewOrdinancePage() {
   const [summary, setSummary] = useState("");
   const [fullText, setFullText] = useState("");
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
-  const [committeeId, setCommitteeId] = useState("");
+  // const [committeeId, setCommitteeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
+  const [isCommitteeDialogOpen, setIsCommitteeDialogOpen] = useState(false);
+  const [selectedCommittee, setSelectedCommittee] = useState<string[]>([]);
 
 
 
@@ -92,8 +94,7 @@ export default function NewOrdinancePage() {
     setFullText("");
     setFullText("");
     setSelectedAuthors([]);
-    setCommitteeId("");
-    setCommitteeId("");
+    setSelectedCommittee([]);
 
     // Also reset the <form> element
     const form = document.querySelector("form") as HTMLFormElement;
@@ -105,6 +106,14 @@ export default function NewOrdinancePage() {
     setSelectedAuthors((prev) =>
       prev.includes(id)
         ? prev.filter((authorId) => authorId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const toggleCommittee = (id: string) => {
+    setSelectedCommittee((prev) =>
+      prev.includes(id)
+        ? prev.filter((committeeId) => committeeId !== id)
         : [...prev, id]
     );
   };
@@ -212,8 +221,11 @@ export default function NewOrdinancePage() {
                     <input key={id} type="hidden" name="authorIds" value={id} />
                   ))}
 
-                  {/* CommitteeID */}
-                  <input type="hidden" name="committeeId" value={committeeId} />
+                      {/* AuthorIDs - Hidden Inputs */}
+                  {selectedCommittee.map((id) => (
+                    <input key={id} type="hidden" name="committeeId" value={id} />
+                  ))}
+
 
                 </div>
               </CardContent>
@@ -282,17 +294,52 @@ export default function NewOrdinancePage() {
 
                 {/* Committee */}
                 <div className="grid gap-3">
-                  <Label>Assigned Committee</Label>
-                  <Select onValueChange={setCommitteeId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select committee" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {committees.map((c) => (
-                        <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label>Committee</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      readOnly
+                      placeholder="No committee selected"
+                      value={committees
+                        .filter((c) => selectedCommittee.includes(c.id))
+                        .map((c) => c.name)
+                        .join(", ")}
+                    />
+                    <Dialog open={isCommitteeDialogOpen} onOpenChange={setIsCommitteeDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">Select</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Select Committees</DialogTitle>
+                          <DialogDescription>
+                            Select the committees who authored this ordinance.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4 max-h-[300px] overflow-y-auto">
+                          {committees.map((committee) => (
+                            <div key={committee.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`committee-${committee.id}`}
+                                checked={selectedCommittee.includes(committee.id)}
+                                onCheckedChange={() => toggleCommittee(committee.id)}
+                              />
+                              <Label
+                                htmlFor={`author-${committee.id}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {committee.name}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button type="button">Done</Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
 
               </CardContent>
