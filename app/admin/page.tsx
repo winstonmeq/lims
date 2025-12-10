@@ -18,9 +18,10 @@ export default async function AdminDashboard() {
     const stats = {
         drafts: ordinances.filter(o => o.status === 'Introduced').length,
         inReview: ordinances.filter(o => o.status === 'In Committee').length,
-        approved: ordinances.filter(o => o.status === 'First Reading').length,
-        published: ordinances.filter(o => o.status === 'Passed').length,
+        // approved: ordinances.filter(o => o.status === 'First Reading').length,
+        passed: ordinances.filter(o => o.status === 'Passed').length,
         rejected: ordinances.filter(o => o.status === 'Rejected').length,
+        published: ordinances.filter(o => o.status === 'Published').length,
 
     };
 
@@ -60,8 +61,8 @@ export default async function AdminDashboard() {
             <Gavel className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.approved}</div>
-             <p className="text-xs text-muted-foreground">items awaiting publication</p>
+            <div className="text-2xl font-bold">{stats.passed}</div>
+             <p className="text-xs text-muted-foreground">total passed items</p>
           </CardContent>
         </Card>
         <Card>

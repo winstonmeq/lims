@@ -30,7 +30,7 @@ export type Vote = {
   vote: VoteValue;
 };
 
-export type OrdinanceStatus = 'Introduced' | 'In Committee' | 'First Reading' | 'Passed' | 'Rejected';
+export type OrdinanceStatus = 'Introduced' | 'In Committee' | 'First Reading' | 'Passed' | 'Rejected' | 'Published';
 
 export type OrdinanceVersion = {    
   id: string;

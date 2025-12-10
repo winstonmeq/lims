@@ -135,7 +135,7 @@ export async function searchOrdinances(query: string, committee: string) {
     await connectDB();
 
     const filter: any = {
-      status: { $in: ["Passed", "In Committee"] },
+      status: { $in: ["Passed", "In Committee", "Introduced", "Published"] },
     };
 
     if (query) {

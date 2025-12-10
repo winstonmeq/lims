@@ -34,6 +34,7 @@ export const ordinanceVersion: OrdinanceVersion[] = [
   {id:'os3', status: 'First Reading'},
   {id:'os4', status: 'Passed'},
   {id:'os5', status: 'Rejected'},
+  {id:'os6', status: 'Published'},
 ];
  
 

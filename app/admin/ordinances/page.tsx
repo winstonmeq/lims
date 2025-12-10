@@ -28,7 +28,6 @@ import type {OrdinanceStatus } from "@/lib/definitions";
 
 
 import { getAllOrdinances } from "@/app/actions/ordinanceActions";
-import { OrdinanceSearchFilters } from "@/components/public/OrdinanceSearchFilters";
 
 
 export default async function OrdinancesAdminPage() {
@@ -41,6 +40,8 @@ export default async function OrdinancesAdminPage() {
         { name: 'In Committee', count: allOrdinance.filter(o => o.status === 'In Committee').length },
         { name: 'First Reading', count: allOrdinance.filter(o => o.status === 'First Reading').length },
         { name: 'Passed', count: allOrdinance.filter(o => o.status === 'Passed').length },
+        { name: 'Published', count: allOrdinance.filter(o => o.status === 'Published').length },
+
     ];
 
     return (

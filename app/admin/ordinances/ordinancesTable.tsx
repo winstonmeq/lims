@@ -21,7 +21,7 @@ import type { Ordinance } from "@/lib/definitions";
 import { committees } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { OrdinanceSearchFilters } from "@/components/public/OrdinanceSearchFilters";
+import { OrdinanceSearchFiltersAdmin } from "@/components/public/OrdinanceSearchFiltersAdmin";
 
 // Ordinances Table Component
 import React, { useState } from "react";
@@ -32,7 +32,7 @@ export function OrdinancesTable({ ordinances }: { ordinances: Ordinance[] }) {
     return (
         <div>
             <div>
-                <OrdinanceSearchFilters setResults={setFilteredOrdinances} />
+                <OrdinanceSearchFiltersAdmin setResults={setFilteredOrdinances} />
             </div>
         <Table>
             <TableHeader>

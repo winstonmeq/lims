@@ -12,7 +12,7 @@ type Props = {
   setResults: (res: Ordinance[]) => void; // setter from parent
 };
 
-export function OrdinanceSearchFilters({ setResults }: Props) {
+export function OrdinanceSearchFiltersAdmin({ setResults }: Props) {
   const [keyword, setKeyword] = useState("");
   const [committee, setCommittee] = useState("all");
   const [loading, setLoading] = useState(false);
@@ -20,10 +20,7 @@ export function OrdinanceSearchFilters({ setResults }: Props) {
   const handleSearch = async () => {
     setLoading(true);
     const found = await searchOrdinances(keyword, committee);
-    const published = found.filter(o => o.status === 'Published');
-
-    console.log(published)
-    setResults(published); // update parent state
+    setResults(found); // update parent state
     setLoading(false);
   };
 
