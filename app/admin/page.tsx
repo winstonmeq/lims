@@ -8,9 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Activity, ArrowUpRight, FileText, Gavel, CheckCircle, Clock } from "lucide-react";
 import Link from 'next/link';
 import { getAllOrdinances } from "../actions/ordinanceActions";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default async function AdminDashboard() {
 
+
+
+export default async function AdminDashboard({ cookies }: { cookies: any }) {
+
+  const session = getSession();
+  if (!session) redirect("/login");
+  
     const ordinances = await getAllOrdinances();
     
 
@@ -26,6 +34,8 @@ export default async function AdminDashboard() {
     };
 
     const recentOrdinances = [...ordinances].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5);
+
+
 
   return (
     <div className="flex flex-col gap-6">

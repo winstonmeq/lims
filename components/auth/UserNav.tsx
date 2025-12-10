@@ -1,3 +1,5 @@
+'use client'
+import { logoutAction } from '@/app/actions/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,15 +12,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export function UserNav() {
   // In a real app, you'd get the user from a session or context
+  const [isLoading, setIsLoading] = useState(false);
+  
   const user = {
     name: 'Admin User',
     email: 'admin@legislate.now',
     avatar: 'https://picsum.photos/seed/admin_user/100/100'
   };
 
+  async function handleLogout() {
+    setIsLoading(true);
+    await logoutAction(); // This deletes cookie + redirects
+  }
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,7 +53,9 @@ export function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-            <Link href="/login">Log out</Link>
+        <Button onClick={handleLogout} variant="ghost" size="sm" disabled={isLoading}>
+               {isLoading ? "Logging out..." : "Logout"}
+      </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

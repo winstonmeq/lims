@@ -27,7 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X } from "lucide-react";
 
 import { committees, councilors, ordinanceVersion } from "@/lib/data";
-import { updateOrdinance } from "@/app/actions/ordinanceActions";
+import { deleteOrdinance, updateOrdinance } from "@/app/actions/ordinanceActions";
 import { useRouter } from "next/navigation";
 
 interface Ordinance {
@@ -76,6 +76,22 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
       }
     });
   };
+
+
+  const handleDelete = async () => {
+    startTransition(async () => {
+      const res = await deleteOrdinance(ordinance.id);
+  
+      if (res.success) {
+        router.push("/admin/ordinances");
+      } else {
+        alert("Failed to delete: " + res.message);
+      }
+    });
+  };
+  
+
+
 
   const toggleAuthor = (id: string) => {
     setSelectedAuthors((prev) =>
@@ -274,6 +290,43 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="grid gap-3 mt-54">
+              
+              <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Delete Ordinance
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Delete Ordinance?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently delete the ordinance.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+
+                        <Button 
+                          variant="destructive"
+                          onClick={handleDelete}
+                          disabled={isPending}
+                        >
+                          {isPending ? "Deleting..." : "Yes, Delete"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+              </div>
+                  
+             
+
 
             </CardContent>
           </Card>

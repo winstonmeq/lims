@@ -95,9 +95,20 @@ export async function updateOrdinance(id: string, formData: FormData) {
 
     const updateData: any = {};
 
-    console.log("FORM DATA TO UPDATE:", formData);
+    // Keys that should always be arrays
+    const arrayFields = ["committeeId", "authorIds"];
 
+    arrayFields.forEach((field) => {
+      const values = formData.getAll(field);
+      if (values && values.length > 0) {
+        updateData[field] = values as string[];
+      }
+    });
+
+    // Handle the rest of the fields
     formData.forEach((value, key) => {
+      if (arrayFields.includes(key)) return; // skip array fields, we already handled them
+
       if (key === "publishedAt" && value) {
         updateData[key] = new Date(value.toString());
       } else {
@@ -112,25 +123,11 @@ export async function updateOrdinance(id: string, formData: FormData) {
     if (!updated) return { success: false, message: "Not found" };
 
     return { success: true, ordinance: JSON.parse(JSON.stringify(updated)) };
+
   } catch (error: any) {
+
     return { success: false, message: error.message };
-  }
-}
 
-/* ============================
-   DELETE Ordinance
-============================ */
-export async function deleteOrdinance(id: string) {
-  try {
-    await connectDB();
-
-    const deleted = await Ordinance.findOneAndDelete({ id });
-
-    if (!deleted) return { success: false, message: "Not found" };
-
-    return { success: true, message: "Deleted successfully" };
-  } catch (error: any) {
-    return { success: false, message: error.message };
   }
 }
 
@@ -178,3 +175,22 @@ export async function searchOrdinances(query: string, committee: string) {
     return [];
   }
 }
+
+
+/* ============================
+   DELETE Ordinance
+============================ */
+export async function deleteOrdinance(id: string) {
+  try {
+    await connectDB();
+
+    const deleted = await Ordinance.findOneAndDelete({ id });
+
+    if (!deleted) return { success: false, message: "Not found" };
+
+    return { success: true, message: "Deleted successfully" };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
+
