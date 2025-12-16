@@ -33,6 +33,7 @@ import { createOrdinance } from "@/app/actions/ordinanceActions";
 export default function NewOrdinancePage() {
   const [title, setTitle] = useState("");
   const [ordinanceNumber, setOrdinanceNumber] = useState("");
+  const [resolutionNumber, setResolutionNumber] = useState("");
   const [summary, setSummary] = useState("");
   const [fullText, setFullText] = useState("");
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
@@ -67,6 +68,9 @@ export default function NewOrdinancePage() {
     formData.set("id", idValue);
     formData.set("status", "Introduced");
 
+
+    console.log(formData);
+
     try {
       const result = await createOrdinance(formData);
 
@@ -78,6 +82,8 @@ export default function NewOrdinancePage() {
       } else {
         alert("Error: " + result.message);
       }
+
+      
     } catch (error) {
       console.error(error);
       alert("Something went wrong!");
@@ -85,11 +91,13 @@ export default function NewOrdinancePage() {
 
     setIsLoading(false);
 
+
   }
 
   function handleDiscard() {
     setTitle("");
     setOrdinanceNumber("");
+    setResolutionNumber("");
     setSummary("");
     setFullText("");
     setFullText("");
@@ -192,6 +200,20 @@ export default function NewOrdinancePage() {
                       placeholder="System will generate if left blank"
                     />
                   </div>
+
+                  
+                  {/* Ordinance Number */}
+                  <div className="grid gap-3">
+                    <Label htmlFor="ordinanceNumber">Resolution Number</Label>
+                    <Input
+                      id="resolutionNumber"
+                      name="resolutionNumber"
+                      value={resolutionNumber}
+                      onChange={(e) => setResolutionNumber(e.target.value)}
+                      placeholder="System will generate if left blank"
+                    />
+                  </div>
+
 
                   {/* Summary */}
                   <div className="grid gap-3">
