@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 interface Ordinance {
   id: string;
   ordinanceNumber: string;
+  resolutionNumber: string;
   title: string;
   summary: string;
   fullText: string;
@@ -41,11 +42,13 @@ interface Ordinance {
   authorIds: string[];
   createdAt: string;
   updatedAt: string;
+  documentUrl?: string | null; // 👈 ADD THIS
 }
 
 export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance }) {
   const [title, setTitle] = useState(ordinance.title);
   const [ordinanceNumber, setOrdinanceNumber] = useState(ordinance.ordinanceNumber);
+  const [resolutionNumber, setResolutionNumber] = useState(ordinance.resolutionNumber);
   const [summary, setSummary] = useState(ordinance.summary);
   const [fullText, setFullText] = useState(ordinance.fullText);
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>(ordinance.authorIds || []);
@@ -58,6 +61,50 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  const [pdfUrl, setPdfUrl] = useState(ordinance.documentUrl || "");
+
+
+  const [existingPdf, setExistingPdf] = useState<string | null>(
+    ordinance.documentUrl || null
+  );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    if (file.type !== "application/pdf") {
+      alert("Only PDF files are allowed");
+      e.target.value = "";
+      return;
+    }
+  
+    setSelectedFile(file);
+  };
+
+  
+
+  const handlePdfUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "sblims");
+  
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/dblaqpixe/raw/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  
+    const data = await res.json();
+  
+    setPdfUrl(data.secure_url); // 🔑 THIS IS THE IMPORTANT PART
+  };
+
+  
 
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -144,6 +191,11 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
               <div className="grid gap-3">
                 <Label>Ordinance Number</Label>
                 <Input name="ordinanceNumber" value={ordinanceNumber} onChange={e => setOrdinanceNumber(e.target.value)} />
+              </div>
+
+              <div className="grid gap-3">
+                <Label>Resolution Number</Label>
+                <Input name="resolutionNumber" value={resolutionNumber} onChange={e => setResolutionNumber(e.target.value)} />
               </div>
 
               <div className="grid gap-3">
@@ -290,6 +342,103 @@ export default function EditOrdinanceForm({ ordinance }: { ordinance: Ordinance 
                   </SelectContent>
                 </Select>
               </div>
+
+              <Card>
+  <CardHeader>
+    <CardTitle>Document</CardTitle>
+    <CardDescription>Uploaded ordinance PDF</CardDescription>
+  </CardHeader>
+
+  <CardContent className="space-y-4">
+
+    {/* EXISTING PDF */}
+    {existingPdf && !selectedFile && (
+      <div className="rounded-md border p-4 bg-muted">
+        <p className="text-sm font-medium">Current PDF</p>
+
+        <a
+          href={existingPdf}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-blue-600 underline"
+        >
+          View / Download PDF
+        </a>
+
+        <p className="text-xs text-muted-foreground mt-1">
+          Upload a new file to replace this document
+        </p>
+      </div>
+    )}
+
+    {/* UPLOAD / REPLACE */}
+    <Label htmlFor="document-upload" className="cursor-pointer">
+      <div
+        className={`flex flex-col items-center justify-center border-2 rounded-md p-6 transition
+          ${
+            selectedFile
+              ? "border-green-500 bg-green-50"
+              : "border-dashed hover:bg-muted"
+          }`}
+      >
+        {selectedFile ? (
+          <>
+            <p className="font-medium text-green-600">New PDF Selected</p>
+            <p className="text-sm">{selectedFile.name}</p>
+            <p className="text-xs text-muted-foreground">
+              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+            </p>
+            <span className="text-xs text-green-600 mt-2">
+              Click to replace again
+            </span>
+          </>
+        ) : (
+          <>
+            <p className="font-medium">
+              {existingPdf ? "Replace PDF" : "Upload PDF"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              PDF only
+            </p>
+          </>
+        )}
+      </div>
+    </Label>
+
+    <Input
+      id="document-upload"
+      name="document"
+      type="file"
+      accept="application/pdf"
+      className="sr-only"
+      onChange={(e) => {
+        if (e.target.files && e.target.files[0]) {
+          handlePdfUpload(e.target.files[0]);
+          handleFileChange(e); // <-- call it
+        }
+      }}
+    />
+
+    {/* REMOVE NEW FILE */}
+    {selectedFile && (
+      <Button
+        type="button"
+        variant="ghost"
+        className="text-destructive"
+        onClick={() => setSelectedFile(null)}
+      >
+        Remove new file
+      </Button>
+    )}
+
+
+    {pdfUrl && (
+      <input type="hidden" name="documentUrl" value={pdfUrl} />
+    )}
+
+  </CardContent>
+</Card>
+
 
               <div className="grid gap-3 mt-54">
               
