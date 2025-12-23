@@ -33,6 +33,7 @@ import { createOrdinance } from "@/app/actions/ordinanceActions";
 export default function NewOrdinancePage() {
   const [title, setTitle] = useState("");
   const [ordinanceNumber, setOrdinanceNumber] = useState("");
+  const [resolutionNumber, setResolutionNumber] = useState("");
   const [summary, setSummary] = useState("");
   const [fullText, setFullText] = useState("");
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
@@ -41,6 +42,7 @@ export default function NewOrdinancePage() {
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
   const [isCommitteeDialogOpen, setIsCommitteeDialogOpen] = useState(false);
   const [selectedCommittee, setSelectedCommittee] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 
 
@@ -51,6 +53,7 @@ export default function NewOrdinancePage() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    
 
     // Fix: avoid variable shadowing
     const ordNum = formData.get("ordinanceNumber") as string;
@@ -67,17 +70,21 @@ export default function NewOrdinancePage() {
     formData.set("id", idValue);
     formData.set("status", "Introduced");
 
+
+
     try {
       const result = await createOrdinance(formData);
 
-      if (result.success) {
-        form.reset();
-        setSelectedAuthors([]);
-        alert("Ordinance saved successfully!");
+      // if (result.success) {
+      //   form.reset();
+      //   setSelectedAuthors([]);
+      //   alert("Ordinance saved successfully!");
 
-      } else {
-        alert("Error: " + result.message);
-      }
+      // } else {
+      //   alert("Error: " + result.message);
+      // }
+
+      
     } catch (error) {
       console.error(error);
       alert("Something went wrong!");
@@ -85,11 +92,13 @@ export default function NewOrdinancePage() {
 
     setIsLoading(false);
 
+
   }
 
   function handleDiscard() {
     setTitle("");
     setOrdinanceNumber("");
+    setResolutionNumber("");
     setSummary("");
     setFullText("");
     setFullText("");
@@ -117,6 +126,24 @@ export default function NewOrdinancePage() {
         : [...prev, id]
     );
   };
+
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+  
+    if (!file) return;
+  
+    if (file.type !== "application/pdf") {
+      alert("Only PDF files are allowed");
+      e.target.value = "";
+      return;
+    }
+  
+    setSelectedFile(file);
+  };
+
+  
+
 
 
   return (
@@ -192,6 +219,20 @@ export default function NewOrdinancePage() {
                       placeholder="System will generate if left blank"
                     />
                   </div>
+
+                  
+                  {/* Resolution Number */}
+                  <div className="grid gap-3">
+                    <Label htmlFor="resolutionNumber">Resolution Number</Label>
+                    <Input
+                      id="resolutionNumber"
+                      name="resolutionNumber"
+                      value={resolutionNumber}
+                      onChange={(e) => setResolutionNumber(e.target.value)}
+                      placeholder="need in creating resolution"
+                    />
+                  </div>
+
 
                   {/* Summary */}
                   <div className="grid gap-3">
@@ -346,21 +387,80 @@ export default function NewOrdinancePage() {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Document Upload</CardTitle>
-                <CardDescription>Optional PDF file</CardDescription>
-              </CardHeader>
+  <CardHeader>
+    <CardTitle>Document Upload</CardTitle>
+    <CardDescription>Optional PDF file</CardDescription>
+  </CardHeader>
 
-              <CardContent>
-                <Label htmlFor="document-upload" className="cursor-pointer">
-                  <div className="flex flex-col items-center justify-center border-2 border-dashed p-6 rounded-md">
-                    <Upload className="h-8 w-8" />
-                    <span>Click to upload or drop PDF</span>
-                  </div>
-                </Label>
-                <Input id="document-upload" type="file" className="sr-only" />
-              </CardContent>
-            </Card>
+  <CardContent className="space-y-4">
+
+    {/* UPLOAD AREA */}
+    <Label htmlFor="document-upload" className="cursor-pointer">
+      <div
+        className={`flex flex-col items-center justify-center border-2 rounded-md p-6 transition
+          ${
+            selectedFile
+              ? "border-green-500 bg-green-50"
+              : "border-dashed hover:bg-muted"
+          }`}
+      >
+        {selectedFile ? (
+          <>
+            <div className="flex items-center gap-2 text-green-600">
+              <Upload className="h-6 w-6" />
+              <span className="font-medium">PDF Ready</span>
+            </div>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              {selectedFile.name}
+            </p>
+
+            <p className="text-xs text-muted-foreground">
+              {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+            </p>
+
+            <span className="mt-2 text-xs text-green-600">
+              Click to replace
+            </span>
+          </>
+        ) : (
+          <>
+            <Upload className="h-8 w-8" />
+            <span className="mt-2 font-medium">
+              Click to upload or drop PDF
+            </span>
+            <span className="text-xs text-muted-foreground">
+              PDF only • Max 10MB
+            </span>
+          </>
+        )}
+      </div>
+    </Label>
+
+    {/* HIDDEN INPUT */}
+    <Input
+      id="document-upload"
+      name="document"
+      type="file"
+      accept="application/pdf"
+      className="sr-only"
+      onChange={handleFileChange}
+    />
+
+    {/* REMOVE BUTTON */}
+    {selectedFile && (
+      <Button
+        type="button"
+        variant="ghost"
+        className="text-destructive"
+        onClick={() => setSelectedFile(null)}
+      >
+        Remove file
+      </Button>
+    )}
+  </CardContent>
+</Card>
+
 
           </div>
         </div>

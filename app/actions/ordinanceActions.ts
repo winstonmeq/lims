@@ -1,19 +1,52 @@
 "use server";
 
 import connectDB from "@/lib/db";
-
+import cloudinary from "@/lib/cloudinary";
 import Ordinance from "@/models/Ordinance";
 
 /* ============================
    CREATE Ordinance
 ============================ */
 export async function createOrdinance(formData: FormData) {
+
+
   try {
     await connectDB();
+
+  /* -------------------------
+       1. Extract PDF
+    -------------------------- */
+    const file = formData.get("document") as File | null;
+
+    let pdfUrl: string | null = null;
+
+    if (file && file.size > 0) {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const uploadResult: any = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            resource_type: "raw", // REQUIRED for PDF
+            folder: "ordinances",
+            format: "pdf",
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
+
+      pdfUrl = uploadResult.secure_url;
+    }
+
+    console.log(formData)
 
     const data = {
       id: formData.get("id") as string,
       ordinanceNumber: formData.get("ordinanceNumber") as string,
+      resolutionNumber: formData.get("resolutionNumber") as string,
       title: formData.get("title") as string,
       summary: formData.get("summary") as string,
       fullText: formData.get("fullText") as string,
@@ -23,9 +56,13 @@ export async function createOrdinance(formData: FormData) {
       publishedAt: formData.get("publishedAt")
         ? new Date(formData.get("publishedAt") as string)
         : undefined,
+      documentUrl: pdfUrl, // 👈 SAVE PDF LINK
+
     };
 
-    const ordinance = await Ordinance.create(data);
+    const ordinance = new Ordinance(data);
+    
+    await ordinance.save();
 
     return { success: true, ordinance: JSON.parse(JSON.stringify(ordinance)) };
   } catch (error: any) {
@@ -44,6 +81,7 @@ export async function getAllOrdinances() {
     return ordinances.map((ord: any) => ({
       id: ord.id?.toString(),                  // string ID
       ordinanceNumber: ord.ordinanceNumber || "",
+      resolutionNumber: ord.resolutionNumber || "",
       title: ord.title || "",
       summary: ord.summary || "",
       fullText: ord.fullText || "",
@@ -94,6 +132,8 @@ export async function updateOrdinance(id: string, formData: FormData) {
     await connectDB();
 
     const updateData: any = {};
+
+    console.log(formData);
 
     // Keys that should always be arrays
     const arrayFields = ["committeeId", "authorIds"];

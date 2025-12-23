@@ -5,6 +5,7 @@ export type OrdinanceStatus = 'Introduced' | 'In Committee' | 'First Reading' | 
 export interface IOrdinance extends Document {
   id: string;
   ordinanceNumber: string;
+  resolutionNumber: string;
   title: string;
   summary: string;
   fullText: string;
@@ -13,19 +14,21 @@ export interface IOrdinance extends Document {
   authorIds: string[];
   createdAt: Date;
   updatedAt: Date;
+  documentUrl: string;
 }
 
 const OrdinanceSchema: Schema = new Schema(
   {
     id: { type: String, required: true, unique: true },
     ordinanceNumber: { type: String, required: true },
+    resolutionNumber: { type: String, required: false },
     title: { type: String, required: true },
     summary: { type: String, required: true },
     fullText: { type: String, required: true },
     status: { type: String, enum: ["Introduced", "In Committee", "First Reading", "Passed", "Rejected", "Published"], required: true },
     committeeId: { type: [String], required: true },
     authorIds: { type: [String], required: true },
-
+    documentUrl: { type: String, required: false },
     publishedAt: { type: Date },
   },
   {
