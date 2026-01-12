@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { councilors, committees } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { StatusBadge } from '@/components/shared/StatusBadge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -32,13 +32,14 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
 
     const result = await getOrdinance(id);
 
-   
 
     if (!result.success || !result.ordinance) {
       notFound();
     }
 
     const ordinance = result.ordinance;
+
+    console.log('this ordinance data', ordinance)
 
 
 
@@ -61,6 +62,7 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
           <StatusBadge status={ordinance.status} className="text-base px-4 py-1.5 md:mt-2" />
         </div>
         <p className="mt-4 text-lg text-muted-foreground max-w">{ordinance.summary}</p>
+
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -70,7 +72,7 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
               <CardTitle>Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
-              <div className="flex items-start gap-3">
+              {/* <div className="flex items-start gap-3">
                 <User className="h-4 w-4 mt-1 text-green-700 flex-shrink-0" />
                 <div>
                   <h4 className="font-semibold">Author</h4>
@@ -81,15 +83,15 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
                 <Gavel className="h-4 w-4 mt-1 text-green-700 flex-shrink-0" />
                 <div>
                   <h4 className="font-semibold">Committee</h4>
-                  <p className="text-muted-foreground">{committee?.name || 'N/A'}</p>
+                  <p className="text-muted-foreground">{ordinance.committee?.name || 'N/A'}</p>
                 </div>
-              </div>
+              </div> */}
               <div className="flex items-start gap-3">
                 <Calendar className="h-4 w-4 mt-1 text-green-800 flex-shrink-0" />
                 <div>
                   <h4 className="font-semibold">Published Date</h4>
                   <p className="text-muted-foreground">
-                    {ordinance.publishedAt ? new Date(ordinance.publishedAt).toLocaleDateString() : 'Not Published'}
+                    {ordinance.createdAt ? new Date(ordinance.createdAt).toLocaleDateString() : 'Not Published'}
                   </p>
                 </div>
               </div>
@@ -98,14 +100,45 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
               </Button> */}
             </CardContent>
           </Card>
+
+          <Card className='mt-4'>
+  <CardHeader>
+    <CardTitle>Document</CardTitle>
+    <CardDescription>Current Ordinance Document PDF</CardDescription>
+  </CardHeader>
+
+  <CardContent className="space-y-4">
+
+    {/* EXISTING PDF */}
+    {
+      <div className="rounded-md border p-4 bg-muted">
+        {/* <p className="text-sm font-medium">Current Ordinance Document PDF</p> */}
+  
+
+        <a href={ordinance.documentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-blue-600 underline"
+        >
+          Downloadable Ordinance PDF.
+
+        </a>
+
+      
+      </div>
+    }
+  
+
+  </CardContent>
+</Card>
         </aside>
 
         <div className="lg:col-span-3">
           <Tabs defaultValue="full-text">
             <TabsList>
               <TabsTrigger value="full-text">Full Text</TabsTrigger>
-              <TabsTrigger value="votes">Voting Record</TabsTrigger>
-              <TabsTrigger value="history">Version History</TabsTrigger>
+              {/* <TabsTrigger value="votes">Voting Record</TabsTrigger>
+              <TabsTrigger value="history">Version History</TabsTrigger> */}
             </TabsList>
             <TabsContent value="full-text" className="mt-4">
               <Card>
@@ -120,6 +153,13 @@ export default async function OrdinanceDetailPage({ params }: { params: Promise<
           
           </Tabs>
         </div>
+        <div>
+          
+
+
+        </div>
+
+        
       </div>
     </div>
   );
